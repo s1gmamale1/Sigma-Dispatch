@@ -20,7 +20,7 @@ Check the `verdict` field:
 ## Step 2 — Determine the base branch
 
 ```bash
-BASE=$(git rev-parse --verify main 2>/dev/null && echo main || echo master)
+BASE=$(git rev-parse --verify main >/dev/null 2>&1 && echo main || echo master)
 ```
 
 If neither `main` nor `master` exists as a branch, report: "Cannot determine base branch — neither `main` nor `master` found. Set the base branch manually and retry." Then **STOP**.

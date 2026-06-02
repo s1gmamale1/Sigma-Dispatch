@@ -6,7 +6,7 @@ const { execFileSync } = require('node:child_process');
 
 const LANE_DIR = '.claude/lanes';
 const MAX_STATUS_BYTES = 65536; // skip oversized status files so they can't block the statusline
-const ICON = { running: '●', done: '✓', error: '✗', idle: '∙' };
+const ICON = { running: '●', done: '✓', error: '✗', idle: '∙', landed: '⊕' };
 
 function mapAgentStatus(status) {
   switch (status) {
@@ -46,7 +46,7 @@ function indexStatuses(statuses) {
 // Pure: merge `claude agents --json` rows with our status index.
 // Status-file fields win when present; empty/falsy values (e.g. "") are treated
 // as absent and fall back to the live agent row — the worker only ever writes
-// real values (state is always running|done|error), so this is intentional.
+// real values (state is running|done|error, plus landed after /land), so this is intentional.
 function mergeLaneView(agentRows, statusIndex) {
   const out = [];
   for (const row of agentRows || []) {

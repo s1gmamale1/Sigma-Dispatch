@@ -92,7 +92,7 @@ A **lane** is a Haiku Claude Code background session whose only job is to drive 
   "name": "<worktree name>",
   "cli": "codex",
   "task": "<short task summary>",
-  "state": "running | done | error",
+  "state": "running | done | error | landed",
   "diffstat": "3 files changed, +120 -4",
   "prUrl": "https://github.com/…/pull/123",
   "verdict": "pending | approve | changes",

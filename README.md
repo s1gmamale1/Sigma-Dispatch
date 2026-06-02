@@ -58,12 +58,12 @@ Add the export to your shell profile so it persists across sessions.
 
 **Statusline wiring**
 
-Add to `.claude/settings.json` in your project:
+Add to `.claude/settings.json` in your project, using the **absolute path** to the plugin's statusline script (the statusline command does not reliably inherit `$CLAUDE_PLUGIN_ROOT`):
 
 ```json
 {
   "statusLine": {
-    "command": "sh -c 'exec node \"$CLAUDE_PROJECT_DIR/plugin/lib/statusline-cli-lanes.cjs\"'"
+    "command": "sh -c 'exec node \"/absolute/path/to/sigma-dispatch/plugin/lib/statusline-cli-lanes.cjs\"'"
   }
 }
 ```

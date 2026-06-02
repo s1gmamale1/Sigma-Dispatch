@@ -32,7 +32,7 @@ Determine the base branch the worktree forked from. The worktree branch is `work
 ```bash
 LANE="<lane-name>"
 WORKTREE=".claude/worktrees/$LANE"
-BASE=$(git -C "$WORKTREE" rev-parse --verify main 2>/dev/null && echo main || echo master)
+BASE=$(git -C "$WORKTREE" rev-parse --verify main >/dev/null 2>&1 && echo main || echo master)
 DIFF=$(git -C "$WORKTREE" diff "$BASE"...HEAD 2>/dev/null)
 ```
 

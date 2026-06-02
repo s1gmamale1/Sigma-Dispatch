@@ -18,7 +18,7 @@ pwd
 git rev-parse --show-toplevel
 ```
 
-You MUST be inside a worktree whose root path contains `.claude/worktrees/`. If the toplevel does NOT contain `.claude/worktrees/` (i.e. you are in the main checkout), write an `error` status (see Step 6) with `error: "safety: not running in a worktree"` and STOP immediately — never edit main.
+You MUST be inside a worktree whose root path contains `.claude/worktrees/`. If the toplevel does NOT contain `.claude/worktrees/` (i.e. you are in the main checkout), write an `error` status (see Step 7) with `error: "safety: not running in a worktree"` and STOP immediately — never edit main.
 
 ## Step 2 — Read the task file
 
@@ -38,7 +38,7 @@ Use the Write tool to write `$MAIN_ROOT/.claude/lanes/$LANE_NAME.json` with `sta
 
 ## Step 4 — Per-worktree CODEX_HOME (isolated, but SEEDED)
 
-Codex credentials live in `~/.codex/auth.json`. Each lane gets its OWN `CODEX_HOME` (isolates the auth mode-switch bug across parallel lanes), but it MUST be seeded with your real credentials or Codex returns HTTP 401. Because each bash block you run is a SEPARATE shell, the `CODEX_HOME` export + seeding must happen in the SAME block as `codex exec` — done in Step 4 below.
+Codex credentials live in `~/.codex/auth.json`. Each lane gets its OWN `CODEX_HOME` (isolates the auth mode-switch bug across parallel lanes), but it MUST be seeded with your real credentials or Codex returns HTTP 401. Because each bash block you run is a SEPARATE shell, the `CODEX_HOME` export + seeding must happen in the SAME block as `codex exec` — done in Step 5 below.
 
 ## Step 5 — Run Codex non-interactively
 
@@ -61,7 +61,7 @@ Flags confirmed via `codex exec --help` (codex 0.135.0):
 - `--skip-git-repo-check` — allows running without a bare git root check
 - `-s workspace-write` — sandbox policy that permits writes within the workspace; auto-approves in-workspace operations so no interactive prompts appear
 
-Capture the exit code. A non-zero exit is an execution error — record it and proceed to Step 5 (check the diff anyway before deciding on error vs done).
+Capture the exit code. A non-zero exit is an execution error — record it and proceed to Step 6 (check the diff anyway before deciding on error vs done).
 
 ## Step 6 — Verify the diff and commit
 

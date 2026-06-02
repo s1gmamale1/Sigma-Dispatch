@@ -34,7 +34,7 @@ pwd
 git rev-parse --show-toplevel
 ```
 
-You MUST be inside a worktree whose root path contains `.claude/worktrees/`. If the toplevel does NOT contain `.claude/worktrees/` (i.e. you are in the main checkout), write an `error` status (see Step 6) with `error: "safety: not running in a worktree"` and STOP immediately — never edit main.
+You MUST be inside a worktree whose root path contains `.claude/worktrees/`. If the toplevel does NOT contain `.claude/worktrees/` (i.e. you are in the main checkout), write an `error` status (see Step 7) with `error: "safety: not running in a worktree"` and STOP immediately — never edit main.
 
 ## Step 2 — Read the task file
 
@@ -47,7 +47,7 @@ Before running, confirm the model is still in the active free-tier list:
 opencode models 2>&1
 ```
 
-If `opencode/deepseek-v4-flash-free` does NOT appear in the output, write an `error` status (see Step 6) with `error: "opencode model opencode/deepseek-v4-flash-free not available — recheck opencode models and update the worker"` and STOP.
+If `opencode/deepseek-v4-flash-free` does NOT appear in the output, write an `error` status (see Step 7) with `error: "opencode model opencode/deepseek-v4-flash-free not available — recheck opencode models and update the worker"` and STOP.
 
 ## Step 4 — Write the initial RUNNING status
 
@@ -86,7 +86,7 @@ Flags confirmed via `opencode run --help` (opencode, checked 2026-06-03):
 - `-f "$TASKFILE"` — attaches the task file for file context
 - Positional message arg — the task prompt passed as a single quoted string
 
-Capture the exit code. A non-zero exit is an execution error — record it and proceed to Step 5 (check the diff anyway before deciding on error vs done).
+Capture the exit code. A non-zero exit is an execution error — record it and proceed to Step 6 (check the diff anyway before deciding on error vs done).
 
 ## Step 6 — Verify the diff and commit
 

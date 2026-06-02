@@ -35,7 +35,7 @@ pwd
 git rev-parse --show-toplevel
 ```
 
-You MUST be inside a worktree whose root path contains `.claude/worktrees/`. If the toplevel does NOT contain `.claude/worktrees/` (i.e. you are in the main checkout), write an `error` status (see Step 6) with `error: "safety: not running in a worktree"` and STOP immediately — never edit main.
+You MUST be inside a worktree whose root path contains `.claude/worktrees/`. If the toplevel does NOT contain `.claude/worktrees/` (i.e. you are in the main checkout), write an `error` status (see Step 7) with `error: "safety: not running in a worktree"` and STOP immediately — never edit main.
 
 ## Step 2 — Check GEMINI_API_KEY (required after 2026-06-18)
 
@@ -46,7 +46,7 @@ if [ -z "$GEMINI_API_KEY" ]; then
 fi
 ```
 
-If the output contains `GEMINI_API_KEY_MISSING`, write an `error` status (see Step 6) with `error: "GEMINI_API_KEY is not set — Gemini CLI requires an API key with a Flash model after the 2026-06-18 subscription tier deprecation. Set GEMINI_API_KEY in your environment and retry."` and STOP immediately.
+If the output contains `GEMINI_API_KEY_MISSING`, write an `error` status (see Step 7) with `error: "GEMINI_API_KEY is not set — Gemini CLI requires an API key with a Flash model after the 2026-06-18 subscription tier deprecation. Set GEMINI_API_KEY in your environment and retry."` and STOP immediately.
 
 ## Step 3 — Read the task file
 
@@ -78,7 +78,7 @@ Flags confirmed via `gemini --help` (checked 2026-06-03):
 - `--yolo` — automatically accepts all tool actions (equivalent to `--approval-mode yolo`); REQUIRED so no interactive confirmation prompts block the background process
 - The prompt text is passed as a quoted string `"$(cat "$TASKFILE")"` — the file is read by the shell before the process starts, with the result passed as a single quoted argument, preventing word-splitting on shell metacharacters
 
-Capture the exit code. A non-zero exit is an execution error — record it and proceed to Step 5 (check the diff anyway before deciding on error vs done).
+Capture the exit code. A non-zero exit is an execution error — record it and proceed to Step 6 (check the diff anyway before deciding on error vs done).
 
 ## Step 6 — Verify the diff and commit
 

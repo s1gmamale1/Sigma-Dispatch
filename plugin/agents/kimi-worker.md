@@ -57,7 +57,7 @@ Flags confirmed via `kimi --help` (checked 2026-06-03):
 - `-p` / `--prompt` — user prompt to the agent; runs non-interactively (headless) with the given prompt instead of launching TUI
 - The prompt text is passed as `"$(cat "$TASKFILE")"` — the file is read by the shell before the process starts, with the result passed as a single quoted argument, preventing word-splitting
 
-Capture the exit code. A non-zero exit is an execution error — record it and proceed to Step 4 (check the diff anyway before deciding on error vs done).
+Capture the exit code. A non-zero exit is an execution error — record it and proceed to Step 5 (check the diff anyway before deciding on error vs done).
 
 ## Step 5 — Verify the diff and commit
 

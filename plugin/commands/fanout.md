@@ -66,7 +66,15 @@ Use the **Write tool** to write the task text to `.claude/lanes/tasks/$id.md`. T
 
 Do NOT echo or pass the task text through the shell — this avoids injection. The Write tool writes it safely as a file.
 
-### 4c — Dispatch the lane
+### 4c — Write the initial RUNNING status
+
+Use the **Write tool** to write `.claude/lanes/$id.json` now — before dispatching — so the lane shows live in the statusline immediately (the worker overwrites it with `done`/`error` at the end):
+
+```json
+{ "id": null, "name": "$id", "cli": "<cli>", "task": "<short summary of this task>", "state": "running", "diffstat": null, "prUrl": null, "verdict": "pending", "error": null, "updatedAt": "<ISO-8601 now>" }
+```
+
+### 4d — Dispatch the lane
 
 ```bash
 task="$(pwd)/.claude/lanes/tasks/$id.md"   # absolute: the lane runs in a worktree, a relative path won't resolve there

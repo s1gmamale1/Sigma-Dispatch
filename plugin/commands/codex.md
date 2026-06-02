@@ -41,7 +41,15 @@ mkdir -p .claude/lanes/tasks
 
 Then use the Write tool: write `$ARGUMENTS` to `.claude/lanes/tasks/$id.md`.
 
-## Step 4 — Dispatch the lane
+## Step 4 — Write the initial RUNNING status (so the lane shows live immediately)
+
+Use the **Write tool** to write `.claude/lanes/$id.json` now — before dispatching — so the lane appears in the statusline the instant it launches (no startup dark window). The worker overwrites this with `done`/`error` when it finishes:
+
+```json
+{ "id": null, "name": "$id", "cli": "codex", "task": "<short one-line summary of $ARGUMENTS>", "state": "running", "diffstat": null, "prUrl": null, "verdict": "pending", "error": null, "updatedAt": "<ISO-8601 now>" }
+```
+
+## Step 5 — Dispatch the lane
 
 Run the following command (backgrounded headless worktree session, Phase-0-confirmed mechanism):
 
@@ -60,7 +68,7 @@ env -u CLAUDE_CODE_SESSION_ID claude -p \
 
 Note: `$CLAUDE_PLUGIN_ROOT` must be set in your environment to the plugin directory path (e.g. `./plugin` or the absolute path). If unset, the worker will not load the codex-worker agent definition.
 
-## Step 5 — Report
+## Step 6 — Report
 
 Tell me:
 - The dispatched lane id: `$id`

@@ -1,0 +1,20 @@
+{
+  "name": "sigma-dispatch",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "jest --testPathPattern=tests/ --forceExit",
+    "test:unit": "jest --testPathPattern=tests/unit --forceExit",
+    "test:integration": "jest --testPathPattern=tests/integration --forceExit",
+    "test:coverage": "jest --testPathPattern=tests/ --coverage --forceExit"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ]
+  }
+}

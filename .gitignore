@@ -1,0 +1,22 @@
+node_modules/
+coverage/
+
+# Local Claude Code / RuFlo project state — NOT part of the Sigma-Dispatch plugin
+.claude/
+.claude-flow/
+.swarm/
+*.db
+*.pid
+
+# Lane runtime (created at runtime inside the target repo)
+**/worktrees/
+.claude/lanes/
+.codex-home/
+
+# RuFlo testgaps-generated tests for .claude/helpers/* (not plugin code)
+tests/unit/router.test.js
+tests/unit/intelligence.test.js
+tests/unit/memory.test.js
+tests/unit/session.test.js
+tests/unit/hook-handler.test.js
+tests/integration/session-memory.test.js

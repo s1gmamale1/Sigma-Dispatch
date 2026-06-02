@@ -1,0 +1,6 @@
+{
+  "name": "sigma-dispatch",
+  "version": "0.1.0",
+  "description": "Dispatch external CLI coding agents (Codex first) as switchable, worktree-isolated Claude Code lanes with a verify-before-merge gate.",
+  "author": { "name": "SIGMA" }
+}

@@ -19,18 +19,21 @@ function mapAgentStatus(status) {
 
 // Pure: compact one-line summary for the statusbar.
 function renderLaneSummary(lanes) {
-  if (!Array.isArray(lanes) || lanes.length === 0) return '';
+  if (!Array.isArray(lanes)) return '';
   const byCli = {};
   for (const l of lanes) {
-    const cli = l.cli || 'cli';
+    // Only show real Sigma-Dispatch lanes (those with a status file → a `cli`).
+    // Unrelated live Claude sessions have no status file and are ignored, so the
+    // bar stays quiet unless there are actual dispatched lanes.
+    if (!l || !l.cli) continue;
     const state = l.state || 'idle';
-    (byCli[cli] = byCli[cli] || {})[state] = (byCli[cli][state] || 0) + 1;
+    (byCli[l.cli] = byCli[l.cli] || {})[state] = (byCli[l.cli][state] || 0) + 1;
   }
   const parts = Object.entries(byCli).map(([cli, states]) => {
     const segs = Object.entries(states).map(([s, n]) => `${ICON[s] || '∙'}${n > 1 ? n : ''}`);
     return `${cli}${segs.join('')}`;
   });
-  return '🛠 ' + parts.join(' · ');
+  return parts.length ? '🛠 ' + parts.join(' · ') : '';
 }
 
 // Pure: index status objects by id and name for fast lookup.

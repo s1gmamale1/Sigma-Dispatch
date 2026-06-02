@@ -101,11 +101,11 @@ describe('renderLaneSummary — edge cases', () => {
     expect(out).toMatch(/∙/);
   });
 
-  // GAP: lane with no cli field defaults to 'cli' group
-  test('missing cli field defaults to cli group', () => {
-    const out = renderLaneSummary([{ state: 'running' }]);
-    expect(out).toMatch(/cli/);
-    expect(out).toMatch(/●/);
+  // Lanes without a cli (unrelated live Claude sessions) are excluded entirely,
+  // so the statusbar stays quiet unless there are real Sigma-Dispatch lanes.
+  test('lanes without a cli are excluded', () => {
+    expect(renderLaneSummary([{ state: 'running' }])).toBe('');
+    expect(renderLaneSummary([{ cli: 'codex', state: 'running' }, { state: 'idle' }])).toBe('🛠 codex●');
   });
 
   // GAP: single item count omits trailing number

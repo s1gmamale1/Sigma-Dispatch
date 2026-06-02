@@ -52,7 +52,19 @@ If the output contains `GEMINI_API_KEY_MISSING`, write an `error` status (see St
 
 Read the task file at the path given in your prompt using the Read tool. Capture its text as `TASK_TEXT`.
 
-## Step 4 — Run Gemini non-interactively
+## Step 4 — Write the initial RUNNING status
+
+Before running the CLI, record that this lane is now active so it shows live in the statusline. Resolve the main checkout and write the status file (same path the final step uses):
+  - MAIN_ROOT: `MAIN_ROOT="$(git rev-parse --show-toplevel | sed 's|/.claude/worktrees/.*||')"`
+  - LANE_NAME: basename of `$(git rev-parse --show-toplevel)`
+  - LANE_ID: `$CLAUDE_CODE_SESSION_ID` (or null if empty)
+
+Use the Write tool to write `$MAIN_ROOT/.claude/lanes/$LANE_NAME.json` with `state` = `"running"`:
+```json
+{ "id": "<LANE_ID or null>", "name": "<LANE_NAME>", "cli": "gemini", "task": "<short one-line summary of the task>", "state": "running", "diffstat": null, "prUrl": null, "verdict": "pending", "error": null, "updatedAt": "<ISO-8601 now>" }
+```
+
+## Step 5 — Run Gemini non-interactively
 
 Your prompt gives an ABSOLUTE task file path. Use it verbatim as `TASKFILE` — do NOT reconstruct or guess it. Pass the prompt via stdin piped into the `-p` flag to avoid unsafe shell expansion of untrusted text:
 
@@ -68,14 +80,14 @@ Flags confirmed via `gemini --help` (checked 2026-06-03):
 
 Capture the exit code. A non-zero exit is an execution error — record it and proceed to Step 5 (check the diff anyway before deciding on error vs done).
 
-## Step 5 — Verify the diff and commit
+## Step 6 — Verify the diff and commit
 
 Run:
 ```bash
 git diff --stat HEAD
 ```
 
-If there are NO changes (empty output), treat this as FAILURE — this guards the known Gemini silent-fail. Write an `error` status (Step 6) with `error: "gemini produced no diff"` and STOP. Do not commit an empty result.
+If there are NO changes (empty output), treat this as FAILURE — this guards the known Gemini silent-fail. Write an `error` status (Step 7) with `error: "gemini produced no diff"` and STOP. Do not commit an empty result.
 
 If there ARE changes:
 ```bash
@@ -87,7 +99,7 @@ Capture `DIFFSTAT` from `git diff --stat HEAD~1 HEAD`.
 
 Do NOT push and do NOT open a PR — lane work stays LOCAL in its worktree. Integration (push / merge) is handled later by `/land`, only after `/verify` approves. Set `PR_URL` to null.
 
-## Step 6 — Write the status file
+## Step 7 — Write the status file
 
 Determine `LANE_NAME` as the basename of `$(git rev-parse --show-toplevel)` (this is the worktree name).
 
@@ -116,7 +128,7 @@ Use the Write tool to write `$MAIN_ROOT/.claude/lanes/$LANE_NAME.json` with exac
 
 On error paths, set `"state": "error"`, `"diffstat": null`, and `"error": "<reason string>"`.
 
-## Step 7 — Print summary and stop
+## Step 8 — Print summary and stop
 
 Print a single line:
 - On success: `done: <LANE_NAME> diffstat="<summary>" prUrl=<url or null>`

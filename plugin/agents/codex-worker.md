@@ -24,11 +24,23 @@ You MUST be inside a worktree whose root path contains `.claude/worktrees/`. If 
 
 Read the task file at the path given in your prompt using the Read tool. Capture its text as `TASK_TEXT`.
 
-## Step 3 — Per-worktree CODEX_HOME (isolated, but SEEDED)
+## Step 3 — Write the initial RUNNING status
+
+Before running the CLI, record that this lane is now active so it shows live in the statusline. Resolve the main checkout and write the status file (same path the final step uses):
+  - MAIN_ROOT: `MAIN_ROOT="$(git rev-parse --show-toplevel | sed 's|/.claude/worktrees/.*||')"`
+  - LANE_NAME: basename of `$(git rev-parse --show-toplevel)`
+  - LANE_ID: `$CLAUDE_CODE_SESSION_ID` (or null if empty)
+
+Use the Write tool to write `$MAIN_ROOT/.claude/lanes/$LANE_NAME.json` with `state` = `"running"`:
+```json
+{ "id": "<LANE_ID or null>", "name": "<LANE_NAME>", "cli": "codex", "task": "<short one-line summary of the task>", "state": "running", "diffstat": null, "prUrl": null, "verdict": "pending", "error": null, "updatedAt": "<ISO-8601 now>" }
+```
+
+## Step 4 — Per-worktree CODEX_HOME (isolated, but SEEDED)
 
 Codex credentials live in `~/.codex/auth.json`. Each lane gets its OWN `CODEX_HOME` (isolates the auth mode-switch bug across parallel lanes), but it MUST be seeded with your real credentials or Codex returns HTTP 401. Because each bash block you run is a SEPARATE shell, the `CODEX_HOME` export + seeding must happen in the SAME block as `codex exec` — done in Step 4 below.
 
-## Step 4 — Run Codex non-interactively
+## Step 5 — Run Codex non-interactively
 
 Your prompt gives an ABSOLUTE task file path. Use it verbatim as `TASKFILE` — do NOT reconstruct or guess it (a relative path won't resolve inside the worktree). Run Codex reading the prompt from stdin:
 ```bash
@@ -51,14 +63,14 @@ Flags confirmed via `codex exec --help` (codex 0.135.0):
 
 Capture the exit code. A non-zero exit is an execution error — record it and proceed to Step 5 (check the diff anyway before deciding on error vs done).
 
-## Step 5 — Verify the diff and commit
+## Step 6 — Verify the diff and commit
 
 Run:
 ```bash
 git diff --stat HEAD
 ```
 
-If there are NO changes (empty output), treat this as FAILURE — this guards the known Codex silent-fail. Write an `error` status (Step 6) with `error: "codex produced no diff"` and STOP. Do not commit an empty result.
+If there are NO changes (empty output), treat this as FAILURE — this guards the known Codex silent-fail. Write an `error` status (Step 7) with `error: "codex produced no diff"` and STOP. Do not commit an empty result.
 
 If there ARE changes:
 ```bash
@@ -70,7 +82,7 @@ Capture `DIFFSTAT` from `git diff --stat HEAD~1 HEAD`.
 
 Do NOT push and do NOT open a PR — lane work stays LOCAL in its worktree. Integration (push / merge) is handled later by `/land`, only after `/verify` approves. Set `PR_URL` to null.
 
-## Step 6 — Write the status file
+## Step 7 — Write the status file
 
 Determine `LANE_NAME` as the basename of `$(git rev-parse --show-toplevel)` (this is the worktree name).
 
@@ -99,7 +111,7 @@ Use the Write tool to write `$MAIN_ROOT/.claude/lanes/$LANE_NAME.json` with exac
 
 On error paths, set `"state": "error"`, `"diffstat": null`, and `"error": "<reason string>"`.
 
-## Step 7 — Print summary and stop
+## Step 8 — Print summary and stop
 
 Print a single line:
 - On success: `done: <LANE_NAME> diffstat="<summary>" prUrl=<url or null>`

@@ -77,6 +77,8 @@ Add to `.claude/settings.json` in your project, using the **absolute path** to t
 
 The statusline script reads the live agent list and lane status files and renders a compact summary (e.g. `codex● · gemini✓2`). If a RuFlo statusline helper is present at `.claude/helpers/statusline.cjs`, the lane summary is composed onto the end of the existing bar — nothing is overwritten.
 
+The `🛠` segment appears **only while you have active dispatch lanes**: `/codex` and `/fanout` write a `running` status the moment they dispatch, the worker flips it to `✓`/`✗` on completion, and it clears once the lane's session exits. Unrelated Claude sessions are filtered out, so an idle bar stays clean.
+
 ---
 
 ## Commands

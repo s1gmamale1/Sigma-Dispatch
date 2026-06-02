@@ -13,10 +13,13 @@ coverage/
 .claude/lanes/
 .codex-home/
 
-# RuFlo testgaps-generated tests for .claude/helpers/* (not plugin code)
-tests/unit/router.test.js
-tests/unit/intelligence.test.js
-tests/unit/memory.test.js
-tests/unit/session.test.js
-tests/unit/hook-handler.test.js
-tests/integration/session-memory.test.js
+# Local RuFlo project config (boilerplate, not part of the plugin)
+CLAUDE.md
+
+# Ship ONLY the plugin's own tests. RuFlo's testgaps hook keeps generating cruft
+# tests for .claude/helpers/* — whitelist ours instead of blacklisting each new one.
+tests/unit/*.test.js
+!tests/unit/lanes.test.js
+!tests/unit/statusline.test.js
+tests/integration/*.test.js
+!tests/integration/lanes-pipeline.test.js

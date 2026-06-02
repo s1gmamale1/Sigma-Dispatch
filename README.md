@@ -56,6 +56,13 @@ claude --plugin-dir "$CLAUDE_PLUGIN_ROOT"
 
 Add the export to your shell profile so it persists across sessions.
 
+**Or install it persistently (recommended)** via the bundled marketplace manifest:
+
+```bash
+claude plugin marketplace add s1gmamale1/Sigma-Dispatch
+claude plugin install sigma-dispatch@sigma-dispatch
+```
+
 **Statusline wiring**
 
 Add to `.claude/settings.json` in your project, using the **absolute path** to the plugin's statusline script (the statusline command does not reliably inherit `$CLAUDE_PLUGIN_ROOT`):

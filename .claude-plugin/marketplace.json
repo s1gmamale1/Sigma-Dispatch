@@ -1,0 +1,15 @@
+{
+  "name": "sigma-dispatch",
+  "description": "Dispatch external CLI coding agents (Codex, OpenCode, Gemini, Kimi) as switchable, worktree-isolated Claude Code lanes with a verify-before-merge gate.",
+  "owner": {
+    "name": "s1gmamale1",
+    "url": "https://github.com/s1gmamale1"
+  },
+  "plugins": [
+    {
+      "name": "sigma-dispatch",
+      "source": "./plugin",
+      "description": "External-CLI agent lanes for Claude Code: /codex, /fanout, /lanes, /verify, /land."
+    }
+  ]
+}

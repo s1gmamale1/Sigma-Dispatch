@@ -51,6 +51,22 @@ main Claude:  /lanes (status) → /verify (Opus reviewer gate) → /land (merge 
 
 A **lane** is a Haiku Claude Code background session whose only job is to drive one external CLI inside its own git worktree, verify the result, and report. Claude Code renders lanes; we never render them ourselves. The CLI does the real coding work; the Haiku wrapper is cheap supervision glue that also gives us liveness (a hung `codex` is noticed by its wrapper, not lost in a raw shell).
 
+### 3b. Consult mode (added v0.2.0)
+
+Lanes are the heavyweight path: isolated, asynchronous, reviewed, git-required. **Consult** is the lightweight complement for *review / research / quick-fix* — when you just want a fast second opinion from another model, not an isolated reviewed change.
+
+```
+main Claude
+   │  /consult <cli> [--write] <prompt>        (slash command)
+   │     — or — Agent(consult)                 (auto-delegation as a sub-agent)
+   ▼  writes prompt to a temp file (injection-safe), then runs synchronously:
+plugin/lib/consult.sh <cli> <ro|rw> <taskfile>   ── runs the CLI IN THE CURRENT DIR
+   ▼                                                (no worktree, no lane file, no git needed)
+returns the CLI's output straight back into the conversation
+```
+
+Differences from a lane: **synchronous** (blocks, returns inline), **no git worktree** (works in non-git folders), **no lane status file / Agent-View entry**, **no `/verify`/`/land` gate**. Read-only by default. Read-only is a *hard* guarantee for `codex` (`codex exec -s read-only` sandbox) and *soft* for `gemini`/`opencode`/`kimi` (read-only preamble + withheld write flags + a post-run `git status` change warning). `--write` lets it edit the current directory directly for quick fixes — the change is left uncommitted for the user to review. `/codex` and `/fanout` git-preflight and point the user at `/consult` when run outside a git repo.
+
 ---
 
 ## 4. Runtime model — lifecycle of a lane
@@ -77,6 +93,9 @@ A **lane** is a Haiku Claude Code background session whose only job is to drive 
 | `plugin/commands/verify.md` | `/verify <id\|all>` — Opus reviewer gate |
 | `plugin/commands/land.md` | `/land <id>` — merge approved lane + cleanup |
 | `plugin/commands/fanout.md` | `/fanout <plan>` — N lanes (phase 5) |
+| `plugin/commands/consult.md` | `/consult <cli> [--write] <prompt>` — inline read-only consult (v0.2.0) |
+| `plugin/agents/consult.md` | Consult dispatcher subagent — lets main Claude auto-delegate (v0.2.0) |
+| `plugin/lib/consult.sh` | Consult helper — synchronous CLI run in cwd, read-only by default (single source of truth, v0.2.0) |
 | `plugin/lib/lanes.cjs` | Pure helpers + IO for lane status (single source of truth) |
 | `plugin/lib/statusline-cli-lanes.cjs` | Composes RuFlo's statusline + appends lane summary |
 | `plugin/README.md` | Usage |

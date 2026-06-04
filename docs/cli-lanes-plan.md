@@ -671,6 +671,19 @@ git add plugin/README.md && git commit -m "docs: cli-lanes README + usage"
 
 ---
 
+## Phase 6 — Consult mode (shipped v0.2.0, post-original-plan)
+
+Added after the original plan to cover lightweight *review / research / quick-fix* use of the CLIs, without a worktree lane. See spec §3b.
+
+- [x] **Task 6.1:** `plugin/lib/consult.sh` — single source of truth. Runs a CLI synchronously in the current dir, read-only by default (`ro`/`rw`). codex = hard `-s read-only` sandbox; gemini/opencode/kimi = soft read-only (RO preamble + withheld write flags + post-run `git status` change warning). Validates cli/mode/taskfile/auth at the boundary.
+- [x] **Task 6.2:** `/consult <cli> [--write] <prompt>` command + `consult` agent (auto-delegation as a synchronous sub-agent).
+- [x] **Task 6.3:** `/codex` + `/fanout` git pre-flight — clear message + `/consult` pointer instead of the raw `--worktree` failure in non-git dirs.
+- [x] **Task 6.4:** `tests/unit/consult.test.js` — 13 tests via fake CLI stubs (no quota): per-CLI flags, input/auth/model guards, read-only honesty check. Whitelisted in `.gitignore`.
+
+Live smokes: codex read-only consult GREEN (hard sandbox held), opencode read-only consult GREEN (tree unchanged), gemini guard fires via the real helper. 54/54 tests pass.
+
+---
+
 ## Self-Review
 
 **Spec coverage:** §3 architecture → Phases 1–4; §4 lifecycle → Phases 2–3 (dispatch/execute/verify/land); §5 components → every task creates one; §6 contracts → status file (Task 2.1), `agents --json` (Phase 0), statusLine (Phase 4); §7 security → file-not-shell task passing (Task 2.2 step 3), worktree isolation (Task 2.1), per-worktree `CODEX_HOME` (Task 2.1), verify gate (Task 3.3/3.4), resource cap (Task 3.1/3.2); §8 Gemini deprecation → Task 5.1; §9 scope → Phases 1–4 = Codex v1, Phase 5 = breadth; §10 risks → Phase 0 fallback + research-preview note in README; §11 Phase-0 gate → Phase 0.

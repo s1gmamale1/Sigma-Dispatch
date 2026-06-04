@@ -21,5 +21,6 @@ CLAUDE.md
 tests/unit/*.test.js
 !tests/unit/lanes.test.js
 !tests/unit/statusline.test.js
+!tests/unit/consult.test.js
 tests/integration/*.test.js
 !tests/integration/lanes-pipeline.test.js

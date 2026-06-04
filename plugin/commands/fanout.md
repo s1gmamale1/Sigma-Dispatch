@@ -12,6 +12,16 @@ $ARGUMENTS
 
 Follow these steps exactly:
 
+## Step 0 — Require a git repository
+
+Lanes run in git worktrees, so this command only works inside a git repo. Check first:
+
+```bash
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 && echo GIT_OK || echo NO_GIT
+```
+
+If the output is `NO_GIT`, STOP and tell the user: "Lane dispatch needs a git repository (worktrees require git). Run `git init` here first, or use `/consult <cli> <task>` for a quick, non-isolated run in this directory." Do not proceed.
+
 ## Step 1 — Check the resource cap before dispatching
 
 Run this exact command to count how many lanes are currently running:

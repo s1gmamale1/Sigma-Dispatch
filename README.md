@@ -39,7 +39,7 @@ Sigma-Dispatch is a Claude Code plugin that lets you offload coding tasks to mul
 
 **Prerequisites**
 
-- A git repository with a `main` or `master` branch.
+- A git repository with a `main` or `master` branch — **required for lanes** (`/codex`, `/fanout`), since they use worktrees. `/consult` does not need a git repo. If you run a lane command outside a git repo it stops with a clear message pointing you at `git init` or `/consult`.
 - The AI CLIs you want to use installed and authenticated:
   - **codex** — credentials in `~/.codex/auth.json`
   - **gemini** — `GEMINI_API_KEY` env var set to a valid API key with Flash model access
@@ -85,11 +85,31 @@ The `🛠` segment appears **only while you have active dispatch lanes**: `/code
 
 | Command | Description |
 |---------|-------------|
+| `/consult <cli> [--write] <prompt>` | **Inline, synchronous** call to one CLI in the *current directory* — no worktree, no lane. Read-only by default; `--write` allows edits. For quick review / research / fixes. Works in non-git folders too. |
 | `/codex <task>` | Dispatch a single Codex lane for the given task. |
 | `/fanout <tasks>` | Dispatch multiple lanes. Each line may be prefixed with `codex:` / `gemini:` / `opencode:` / `kimi:` (default `codex`). Enforces the 4-lane running cap. |
 | `/lanes` | Show the status of all lanes (name, cli, state, diffstat, verdict). |
 | `/verify <lane>` | Run an Opus reviewer gate over the lane's diff. Updates the lane verdict to `approve` or `changes`. |
 | `/land <lane>` | Merge an approved lane into the base branch with `--no-ff` and clean up the worktree. |
+
+### Lanes vs. consult — which to use
+
+- **Lane** (`/codex`, `/fanout`) — for *implementation* work you want isolated and reviewed: runs in a git worktree, commits locally, goes through `/verify` → `/land`. Requires a git repo. Asynchronous; shows in the Agent View and statusline.
+- **Consult** (`/consult`) — for a *quick second opinion or fix*: runs the CLI synchronously in the current directory and returns its output straight into the conversation. No worktree, no lifecycle, no git requirement. Read-only by default.
+
+### Consult mode
+
+```bash
+/consult codex    review plugin/lib/lanes.cjs for edge cases     # read-only (default)
+/consult gemini   research how sessions are cached in this repo  # read-only
+/consult opencode --write fix the typo in README.md              # writes to the current dir
+```
+
+Read-only is a **hard guarantee for `codex`** (it runs under codex's `-s read-only` sandbox and genuinely cannot write). For `gemini` / `opencode` / `kimi` there is no read-only sandbox, so read-only is **best-effort**: a strict read-only preamble is prepended, write-enabling flags are withheld where possible, and if the working tree changes during a read-only consult the helper prints a `consult-warning`. Prefer `codex` when you need a guaranteed-safe review.
+
+In `--write` mode nothing is committed — changes are left in the working tree for you to review (`git diff`) and commit yourself. There is no `/verify` gate on consult writes, so use it for small, obvious fixes; reach for a lane when you want the review gate.
+
+Main Claude can also delegate to the bundled `consult` agent directly (e.g. "have codex review this") — it's the same path, run as a synchronous sub-agent so the CLI's verbose output stays out of the main context.
 
 ---
 

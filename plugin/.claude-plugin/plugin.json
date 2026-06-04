@@ -1,6 +1,6 @@
 {
   "name": "sigma-dispatch",
-  "version": "0.1.1",
-  "description": "Dispatch external CLI coding agents (Codex first) as switchable, worktree-isolated Claude Code lanes with a verify-before-merge gate.",
+  "version": "0.2.0",
+  "description": "Dispatch external CLI coding agents (Codex/Gemini/OpenCode/Kimi) as switchable, worktree-isolated Claude Code lanes with a verify-before-merge gate, plus inline read-only consult mode for quick review/research/fixes.",
   "author": { "name": "SIGMA" }
 }
